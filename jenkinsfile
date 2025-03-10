@@ -2,27 +2,27 @@ pipeline {
     agent any
 
     stages {
-        stage('build') {
+        stage('Build') {
             steps {
                 sh 'echo building > build.txt'
             }
         }
-        stage('test') {
+        stage('Test') {
             steps {
                 sh 'ls -la'
             }
         }
-        stage('deploy') {
+        stage('Deploy') {
             steps {
                 sh 'echo deploying to prod'
             }
         }
-        stage('sys-info') {
+        stage('System Information') {
             steps {
-                sh 'hostnamectl'      // Get host information
-                sh 'timedatectl'      // Get system time and date
-                sh 'free -h'          // Display memory usage in human-readable format
-                sh 'uname -a'         // Display system information
+                sh 'hostnamectl'       # Get host information
+                sh 'timedatectl'       # Get system time and date
+                sh 'free -h'           # Display memory usage in human-readable format
+                sh 'uname -a'          # Display system information
             }
         }
     }
