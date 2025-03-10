@@ -1,0 +1,29 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('build') {
+            steps {
+                sh 'echo building > build.txt'
+            }
+        }
+        stage('test') {
+            steps {
+                sh 'ls -la'
+            }
+        }
+        stage('deploy') {
+            steps {
+                sh 'echo deploying to prod'
+            }
+        }
+        stage('sys-info') {
+            steps {
+                sh 'hostnamectl'      // Get host information
+                sh 'timedatectl'      // Get system time and date
+                sh 'free -h'          // Display memory usage in human-readable format
+                sh 'uname -a'         // Display system information
+            }
+        }
+    }
+}
