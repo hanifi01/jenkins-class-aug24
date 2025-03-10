@@ -4,9 +4,10 @@ pipeline {
     stages {
         stage('Terraform Init') {
             steps {
-                script {
-                    // Initialize Terraform (adjust the directory if needed)
-                    dir('path/to/your/terraform/files') {
+                dir('.infra') {  // Specify the correct directory where your Terraform files are
+                    script {
+                        // Initialize Terraform in the .infra directory
+                        echo 'Initializing Terraform...'
                         sh 'terraform init'
                     }
                 }
@@ -15,9 +16,10 @@ pipeline {
 
         stage('Terraform Validate') {
             steps {
-                script {
-                    // Validate Terraform configuration
-                    dir('path/to/your/terraform/files') {
+                dir('.infra') {  // Specify the correct directory where your Terraform files are
+                    script {
+                        // Validate Terraform configuration
+                        echo 'Validating Terraform configuration...'
                         sh 'terraform validate'
                     }
                 }
@@ -26,9 +28,10 @@ pipeline {
 
         stage('Terraform Format') {
             steps {
-                script {
-                    // Format Terraform configuration files
-                    dir('path/to/your/terraform/files') {
+                dir('.infra') {  // Specify the correct directory where your Terraform files are
+                    script {
+                        // Check if Terraform configuration files are formatted correctly
+                        echo 'Checking Terraform format...'
                         sh 'terraform fmt -check'
                     }
                 }
@@ -37,9 +40,10 @@ pipeline {
 
         stage('Terraform Plan') {
             steps {
-                script {
-                    // Generate and show Terraform execution plan
-                    dir('path/to/your/terraform/files') {
+                dir('.infra') {  // Specify the correct directory where your Terraform files are
+                    script {
+                        // Generate and show Terraform execution plan
+                        echo 'Running Terraform plan...'
                         sh 'terraform plan'
                     }
                 }
@@ -48,9 +52,10 @@ pipeline {
 
         stage('Terraform Apply') {
             steps {
-                script {
-                    // Apply Terraform changes automatically
-                    dir('path/to/your/terraform/files') {
+                dir('.infra') {  // Specify the correct directory where your Terraform files are
+                    script {
+                        // Apply Terraform changes automatically with the -auto-approve flag
+                        echo 'Applying Terraform changes...'
                         sh 'terraform apply -auto-approve'
                     }
                 }
