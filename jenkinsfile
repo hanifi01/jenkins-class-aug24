@@ -32,6 +32,12 @@ pipeline {
                 sh 'uname -a'
             }
         }
+        stage('Terraform Version') {
+            steps {
+                // Run Terraform version check
+                sh 'terraform -v'
+            }
+        }
     }
 
     post {
