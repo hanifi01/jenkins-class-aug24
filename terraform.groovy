@@ -5,8 +5,10 @@ pipeline {
         stage('Terraform Init') {
             steps {
                 script {
-                    // Initialize Terraform
-                    sh 'terraform init'
+                    // Initialize Terraform (adjust the directory if needed)
+                    dir('path/to/your/terraform/files') {
+                        sh 'terraform init'
+                    }
                 }
             }
         }
@@ -15,7 +17,9 @@ pipeline {
             steps {
                 script {
                     // Validate Terraform configuration
-                    sh 'terraform validate'
+                    dir('path/to/your/terraform/files') {
+                        sh 'terraform validate'
+                    }
                 }
             }
         }
@@ -24,7 +28,9 @@ pipeline {
             steps {
                 script {
                     // Format Terraform configuration files
-                    sh 'terraform fmt -check'
+                    dir('path/to/your/terraform/files') {
+                        sh 'terraform fmt -check'
+                    }
                 }
             }
         }
@@ -33,7 +39,9 @@ pipeline {
             steps {
                 script {
                     // Generate and show Terraform execution plan
-                    sh 'terraform plan'
+                    dir('path/to/your/terraform/files') {
+                        sh 'terraform plan'
+                    }
                 }
             }
         }
@@ -42,7 +50,9 @@ pipeline {
             steps {
                 script {
                     // Apply Terraform changes automatically
-                    sh 'terraform apply -auto-approve'
+                    dir('path/to/your/terraform/files') {
+                        sh 'terraform apply -auto-approve'
+                    }
                 }
             }
         }
