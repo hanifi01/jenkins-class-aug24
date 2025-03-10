@@ -1,74 +1,75 @@
-pipeline {
+pipeline{
     agent any
 
-    stages {
-        stage('Terraform Init') {
-            steps {
-                dir('.infra') {  // Ensure .infra has your .tf files
-                    script {
-                        echo 'Initializing Terraform...'
-                        def initOutput = sh(script: 'terraform init', returnStdout: true).trim()
-                        echo "Terraform Init Output: ${initOutput}"
-                    }
-                }
-            }
-        }
+    options{
+      buildDiscarder(logRotator(numToKeepStr: '3'))
+      retry(2)
+      timeout(time: 1, unit: 'MINUTES')
+      ansiColor('xterm')
+    }
 
-        stage('Terraform Validate') {
-            steps {
-                dir('.infra') {  // Ensure .infra has your .tf files
-                    script {
-                        echo 'Validating Terraform configuration...'
-                        def validateOutput = sh(script: 'terraform validate', returnStdout: true).trim()
-                        echo "Terraform Validate Output: ${validateOutput}"
-                    }
-                }
-            }
-        }
+    parameters{
+        // string(name: 'TF_ACTION', description: "Terraform action", defaultValue: '')
+        booleanParam(name: 'IS_PROD', description: 'Environment:', defaultValue: true)
+        choice(name: 'CHOICE_PARAM', description: 'Select a choice:', choices: ['Terraform', 'Cloudformation', 'Plumi'])
+        choice(name: 'TF_ACTION', description: 'Select Terraform action:', choices: ['apply', 'destroy'])
+    }
 
-        stage('Terraform Format') {
-            steps {
-                dir('.infra') {  // Ensure .infra has your .tf files
-                    script {
-                        echo 'Checking Terraform format...'
-                        def fmtOutput = sh(script: 'terraform fmt -check', returnStdout: true).trim()
-                        echo "Terraform Format Output: ${fmtOutput}"
-                    }
+    stages{
+        stage('init'){
+          steps{
+                dir('infra'){
+                    sh 'terraform init'
+                    echo "Selected choice is: ${params.CHOICE_PARAM}"
                 }
-            }
+          }
         }
-
-        stage('Terraform Plan') {
-            steps {
-                dir('.infra') {  // Ensure .infra has your .tf files
-                    script {
-                        echo 'Running Terraform plan...'
-                        def planOutput = sh(script: 'terraform plan', returnStdout: true).trim()
-                        echo "Terraform Plan Output: ${planOutput}"
-                    }
+        stage('tf-check'){
+          steps{
+                dir('infra'){
+                    sh 'terraform fmt; terraform validate'
                 }
-            }
+          }
         }
-
-        stage('Terraform Apply') {
-            steps {
-                dir('.infra') {  // Ensure .infra has your .tf files
-                    script {
-                        echo 'Applying Terraform changes...'
-                        def applyOutput = sh(script: 'terraform apply -auto-approve', returnStdout: true).trim()
-                        echo "Terraform Apply Output: ${applyOutput}"
-                    }
+        stage('plan'){
+          steps{
+                dir('infra'){
+                    sh 'terraform plan'
+                }
+              }
+          }
+        
+        stage('execute'){
+          steps{
+                dir('infra'){
+                    echo "Is this Production Environment? ${params.IS_PROD}"
+                    input message: 'Do you want to approve the deployment?', ok: 'Yes'
+                    sh "terraform ${params.TF_ACTION} -auto-approve"
                 }
             }
         }
     }
-
     post {
-        success {
-            echo 'Terraform pipeline executed successfully!'
-        }
-        failure {
-            echo 'Terraform pipeline failed.'
+    success {
+        echo 'Infra has been build successfully'
+    }
+    failure {
+        echo 'Infra build failed'
+    }
+    aborted {
+        echo 'Pipeline aborted!'
+    }
+    cleanup { // always executes
+        echo 'Pipeline build finished and cleaning up .....'
+        cleanWs()
+        dir("${workspace_tmp}") {
+            deleteDir()
         }
     }
 }
+}
+
+
+
+
+
