@@ -6,9 +6,9 @@ pipeline {
             steps {
                 dir('.infra') {  // Ensure .infra has your .tf files
                     script {
-                        // Initialize Terraform in the .infra directory
                         echo 'Initializing Terraform...'
-                        sh 'terraform init'
+                        def initOutput = sh(script: 'terraform init', returnStdout: true).trim()
+                        echo "Terraform Init Output: ${initOutput}"
                     }
                 }
             }
@@ -18,9 +18,9 @@ pipeline {
             steps {
                 dir('.infra') {  // Ensure .infra has your .tf files
                     script {
-                        // Validate Terraform configuration
                         echo 'Validating Terraform configuration...'
-                        sh 'terraform validate'
+                        def validateOutput = sh(script: 'terraform validate', returnStdout: true).trim()
+                        echo "Terraform Validate Output: ${validateOutput}"
                     }
                 }
             }
@@ -30,9 +30,9 @@ pipeline {
             steps {
                 dir('.infra') {  // Ensure .infra has your .tf files
                     script {
-                        // Check if Terraform configuration files are formatted correctly
                         echo 'Checking Terraform format...'
-                        sh 'terraform fmt -check'
+                        def fmtOutput = sh(script: 'terraform fmt -check', returnStdout: true).trim()
+                        echo "Terraform Format Output: ${fmtOutput}"
                     }
                 }
             }
@@ -42,9 +42,9 @@ pipeline {
             steps {
                 dir('.infra') {  // Ensure .infra has your .tf files
                     script {
-                        // Generate and show Terraform execution plan
                         echo 'Running Terraform plan...'
-                        sh 'terraform plan'
+                        def planOutput = sh(script: 'terraform plan', returnStdout: true).trim()
+                        echo "Terraform Plan Output: ${planOutput}"
                     }
                 }
             }
@@ -54,9 +54,9 @@ pipeline {
             steps {
                 dir('.infra') {  // Ensure .infra has your .tf files
                     script {
-                        // Apply Terraform changes automatically with the -auto-approve flag
                         echo 'Applying Terraform changes...'
-                        sh 'terraform apply -auto-approve'
+                        def applyOutput = sh(script: 'terraform apply -auto-approve', returnStdout: true).trim()
+                        echo "Terraform Apply Output: ${applyOutput}"
                     }
                 }
             }
