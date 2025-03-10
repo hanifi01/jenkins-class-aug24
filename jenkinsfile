@@ -1,6 +1,5 @@
 pipeline {
     agent any
-
     stages {
         stage('Build') {
             steps {
@@ -19,10 +18,10 @@ pipeline {
         }
         stage('System Information') {
             steps {
-                sh 'hostnamectl'       # Get host information
-                sh 'timedatectl'       # Get system time and date
-                sh 'free -h'           # Display memory usage in human-readable format
-                sh 'uname -a'          # Display system information
+                sh 'hostnamectl' // Get host information
+                sh 'timedatectl' // Get system time and date
+                sh 'free -h' // Display memory usage in human-readable format
+                sh 'uname -a' // Display system information
             }
         }
     }
