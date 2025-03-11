@@ -38,13 +38,11 @@ pipeline {
             echo 'Pipeline aborted'
         }
         always {
-            steps {
-                echo 'Pipeline build finished and cleaning up...'
-                cleanWs()
-                // Remove temporary directories or files explicitly if required
-                dir("${workspace_tmp}") {
-                    deleteDir()
-                }
+            echo 'Pipeline build finished and cleaning up...'
+            cleanWs()
+            // Remove temporary directories or files explicitly if required
+            dir("${workspace_tmp}") {
+                deleteDir()
             }
         }
     }
