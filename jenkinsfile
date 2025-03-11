@@ -34,7 +34,7 @@ pipeline {
         }
         stage('Terraform Version') {
             steps {
-                // Run Terraform version check
+                // Ensure Terraform is installed and show its version
                 sh 'terraform -v'
             }
         }
