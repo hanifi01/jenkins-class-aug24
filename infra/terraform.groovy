@@ -72,3 +72,24 @@
 //         }
 //     }
 // }
+
+
+pipeline {
+    agent any
+
+    stages {
+        stage('Checkout') {
+            steps {
+                git 'https://github.com/hanifi01/jenkins-class-aug24.git'
+            }
+        }
+        stage('Apply Terraform') {
+            steps {
+                script {
+                    sh 'terraform init'
+                    sh 'terraform apply -auto-approve'
+                }
+            }
+        }
+    }
+}
