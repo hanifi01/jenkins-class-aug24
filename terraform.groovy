@@ -38,7 +38,8 @@ pipeline {
             echo 'Pipeline aborted'
         }
         always {
-            echo 'Pipeline build completed and cleaning up'
+            echo 'Pipeline build finished and and cleaning up .....'
+            cleanWs()
         }
     }
 }
