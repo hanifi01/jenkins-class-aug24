@@ -11,7 +11,7 @@ pipeline {
         buildDiscarder(logRotator(numToKeepStr: '3')) // Keep only the last 3 builds
         retry(2) // Retry the pipeline twice on failure
         timeout(time: 1, unit: 'HOURS') // Timeout for the pipeline
-        ansiColor('xterm') // Enable colored output in the log
+        ansiColor('xterm') // Enable colored output in the logs
     }
 
     stages {
@@ -19,7 +19,7 @@ pipeline {
             steps {
                 dir('infra') {
                     sh 'terraform init' // Initialize Terraform
-                    echo "Selected choice is: ${params.CHOICE_PARAM}" // Display the user's choice
+                    echo "Selected choice is: ${params.CHOICE_PARAM}" // Log the user's choice
                 }
             }
         }
@@ -27,7 +27,7 @@ pipeline {
         stage('tf-check') {
             steps {
                 dir('infra') {
-                    sh 'terraform fmt && terraform validate' // Format and validate the Terraform configuration
+                    sh 'terraform fmt && terraform validate' // Format and validate Terraform code
                 }
             }
         }
@@ -44,10 +44,10 @@ pipeline {
             steps {
                 dir('infra') {
                     input message: 'Do you want to approve the deployment?', ok: 'Yes' // Prompt user for approval
-                    echo "Initiating deployment..." // Indicate start of deployment
+                    echo "Initiating deployment..." // Indicate the start of deployment
                     echo "Is this production environment? ${params.IS_PROD}" // Show boolean parameter value
-                    echo "Executing Terraform Action: ${params.TF_ACTION}" // Show the action being executed
-                    sh "terraform ${params.TF_ACTION} -auto-approve" // Execute the Terraform action
+                    echo "Executing Terraform Action: ${params.TF_ACTION}" // Display the action being executed
+                    sh "terraform ${params.TF_ACTION} -auto-approve" // Perform the Terraform action
                 }
             }
         }
@@ -55,16 +55,16 @@ pipeline {
 
     post {
         success {
-            echo 'Infrastructure build successful'
+            echo 'Infrastructure build successful' // Log success
         }
         failure {
-            echo 'Infrastructure build failed'
+            echo 'Infrastructure build failed' // Log failure
         }
         aborted {
-            echo 'Pipeline aborted'
+            echo 'Pipeline aborted' // Log if the pipeline was aborted
         }
         always {
-            echo 'Pipeline build finished and cleaning up...' // Indicate pipeline cleanup
+            echo 'Pipeline build finished and cleaning up...' // Indicate cleanup
             cleanWs() // Cleanup workspace
         }
     }
