@@ -2,9 +2,9 @@ pipeline {
     agent any
 
     parameters {
-        string(name: 'tf_TEST', description: 'Terraform Action', defaultValue: '') // Fixed syntax for string parameter
-        booleanParam(name: 'IS_PROD', description: 'Is this production environment?', defaultValue: true) // Corrected booleanParam syntax
-        choice(name: 'CHOICE_PARAM', description: 'Select a choice:', choices: ['Terraform', 'Cloudformation', 'Pulumi']) // Fixed choice syntax
+        string(name: 'tf_TEST', description: 'Terraform Action', defaultValue: '') // Corrected syntax for string parameter
+        booleanParam(name: 'IS_PROD', description: 'Is this production environment?', defaultValue: true) // Fixed booleanParam syntax
+        choice(name: 'CHOICE_PARAM', description: 'Select a choice:', choices: ['Terraform', 'Cloudformation', 'Pulumi']) // Correctly defined choice parameter
     }
 
     stages {
@@ -12,7 +12,7 @@ pipeline {
             steps {
                 dir('infra') {
                     sh 'terraform init'
-                    echo "Selected choice is: ${params.CHOICE_PARAM}" // Corrected syntax for parameter reference
+                    echo "Selected choice is: ${params.CHOICE_PARAM}" // Display the chosen option
                 }
             }
         }
@@ -28,7 +28,7 @@ pipeline {
         stage('tf-plan') {
             steps {
                 dir('infra') {
-                    sh 'terraform plan' // Corrected action to 'plan' for tf-plan stage
+                    sh 'terraform plan' // Updated the action for the plan stage
                 }
             }
         }
@@ -36,8 +36,8 @@ pipeline {
         stage('tf-apply') {
             steps {
                 dir('infra') {
-                    echo "Is this production environment? ${params.IS_PROD}" // Corrected syntax for params usage
-                    sh "terraform ${params.tf_TEST} -auto-approve" // Corrected parameter reference
+                    echo "Is this production environment? ${params.IS_PROD}" // Display boolean parameter
+                    sh "terraform ${params.tf_TEST} -auto-approve" // Use string parameter
                 }
             }
         }
