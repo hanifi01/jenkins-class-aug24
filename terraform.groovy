@@ -28,7 +28,7 @@ pipeline {
         stage('tf-plan') {
             steps {
                 dir('infra') {
-                    sh 'terraform plan' // Updated to 'terraform plan' for this stage
+                    sh 'terraform plan' // Use 'plan' action for this stage
                 }
             }
         }
