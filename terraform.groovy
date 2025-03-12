@@ -37,7 +37,7 @@ pipeline {
             steps {
                 dir('infra') {
                     echo "Is this production environment? ${params.IS_PROD}" // Display the value of the boolean parameter
-                    sh "terraform ${params.tf_TEST} -auto-approve" // Use the string parameter for the Terraform action
+                    sh "terraform ${params.TF_ACTION} -auto-approve" // Use the string parameter for the Terraform action
                 }
             }
         }
