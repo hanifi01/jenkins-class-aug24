@@ -42,6 +42,8 @@ pipeline {
         stage('tf-apply') {
             steps {
                 dir('infra') {
+                    input message: 'Do you want to approve the deployment?', ok: 'Yes' // Corrected syntax for the input step
+                    echo "Initiating deployment" // Fixed spelling
                     echo "Is this production environment? ${params.IS_PROD}" // Display the value of the boolean parameter
                     echo "Executing Terraform Action: ${params.TF_ACTION}" // Debugging to show the value
                     sh "terraform ${params.TF_ACTION} -auto-approve" // Correctly include TF_ACTION value
