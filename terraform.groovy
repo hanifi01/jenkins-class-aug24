@@ -7,6 +7,12 @@ pipeline {
         choice(name: 'CHOICE_PARAM', description: 'Select a choice:', choices: ['Terraform', 'CloudFormation', 'Pulumi']) // Correct syntax for choice parameter
     }
 
+    options { 
+        buildDiscarder(logRotator(numToKeepStr: '3')) // Keep only the last 3 builds
+        retry(2) // Retry the pipeline twice on failure
+        timeout(time: 1, unit: 'HOURS') // Set a timeout for the pipeline
+    }
+
     stages {
         stage('tf-init') {
             steps {
