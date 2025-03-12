@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     parameters {
-        string(name: 'tf_TEST', description: 'Enter the Terraform action (e.g., plan, apply)', defaultValue: '') // Correct syntax for string parameter
+        string(name: 'TF_ACTION', description: 'Enter the Terraform action (e.g., plan, apply)', defaultValue: '') // Correct syntax for string parameter
         booleanParam(name: 'IS_PROD', description: 'Is this production environment?', defaultValue: true) // Properly configured boolean parameter
         choice(name: 'CHOICE_PARAM', description: 'Select a choice:', choices: ['Terraform', 'CloudFormation', 'Pulumi']) // Correct syntax for choice parameter
     }
