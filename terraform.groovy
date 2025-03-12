@@ -2,23 +2,24 @@ pipeline {
     agent any
 
     parameters {
-        string(name: 'TF_ACTION', description: 'Enter the Terraform action (e.g., plan, apply, destroy)', defaultValue: 'apply') // Ensure action defaults to apply
-        booleanParam(name: 'IS_PROD', description: 'Is this production environment?', defaultValue: true) // Properly configured boolean parameter
-        choice(name: 'CHOICE_PARAM', description: 'Select a choice:', choices: ['Terraform', 'CloudFormation', 'Pulumi']) // Correct syntax for choice parameter
+        string(name: 'TF_ACTION', description: 'Enter the Terraform action (e.g., plan, apply, destroy)', defaultValue: 'apply') // Default action to apply
+        booleanParam(name: 'IS_PROD', description: 'Is this production environment?', defaultValue: true) // Boolean parameter for production
+        choice(name: 'CHOICE_PARAM', description: 'Select a choice:', choices: ['Terraform', 'CloudFormation', 'Pulumi']) // Dropdown choice parameter
     }
 
     options { 
         buildDiscarder(logRotator(numToKeepStr: '3')) // Keep only the last 3 builds
         retry(2) // Retry the pipeline twice on failure
-        timeout(time: 1, unit: 'HOURS') // Set a timeout for the pipeline
+        timeout(time: 1, unit: 'HOURS') // Timeout for the pipeline
+        ansiColor('xterm') // Enable colored output in the log
     }
 
     stages {
         stage('tf-init') {
             steps {
                 dir('infra') {
-                    sh 'terraform init'
-                    echo "Selected choice is: ${params.CHOICE_PARAM}" // Display the selected option in the pipeline log
+                    sh 'terraform init' // Initialize Terraform
+                    echo "Selected choice is: ${params.CHOICE_PARAM}" // Display the user's choice
                 }
             }
         }
@@ -26,7 +27,7 @@ pipeline {
         stage('tf-check') {
             steps {
                 dir('infra') {
-                    sh 'terraform fmt && terraform validate'
+                    sh 'terraform fmt && terraform validate' // Format and validate the Terraform configuration
                 }
             }
         }
@@ -34,7 +35,7 @@ pipeline {
         stage('tf-plan') {
             steps {
                 dir('infra') {
-                    sh 'terraform plan' // Use 'plan' action for this stage
+                    sh 'terraform plan' // Generate and display the Terraform plan
                 }
             }
         }
@@ -42,11 +43,11 @@ pipeline {
         stage('tf-apply') {
             steps {
                 dir('infra') {
-                    input message: 'Do you want to approve the deployment?', ok: 'Yes' // Corrected syntax for the input step
-                    echo "Initiating deployment" // Fixed spelling
-                    echo "Is this production environment? ${params.IS_PROD}" // Display the value of the boolean parameter
-                    echo "Executing Terraform Action: ${params.TF_ACTION}" // Debugging to show the value
-                    sh "terraform ${params.TF_ACTION} -auto-approve" // Correctly include TF_ACTION value
+                    input message: 'Do you want to approve the deployment?', ok: 'Yes' // Prompt user for approval
+                    echo "Initiating deployment..." // Indicate start of deployment
+                    echo "Is this production environment? ${params.IS_PROD}" // Show boolean parameter value
+                    echo "Executing Terraform Action: ${params.TF_ACTION}" // Show the action being executed
+                    sh "terraform ${params.TF_ACTION} -auto-approve" // Execute the Terraform action
                 }
             }
         }
@@ -63,8 +64,8 @@ pipeline {
             echo 'Pipeline aborted'
         }
         always {
-            echo 'Pipeline build finished and cleaning up...'
-            cleanWs() // Clean the workspace
+            echo 'Pipeline build finished and cleaning up...' // Indicate pipeline cleanup
+            cleanWs() // Cleanup workspace
         }
     }
 }
