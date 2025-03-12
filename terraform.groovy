@@ -2,10 +2,9 @@ pipeline {
     agent any
 
     parameters {
-        string(name: 'TF_ACTION', description: 'Enter the Terraform action (e.g., plan, apply)', defaultValue: '') // Correct syntax for string parameter
+        string(name: 'TF_ACTION', description: 'Enter the Terraform action (e.g., plan, apply, destroy)', defaultValue: 'apply') // Ensure action defaults to apply
         booleanParam(name: 'IS_PROD', description: 'Is this production environment?', defaultValue: true) // Properly configured boolean parameter
         choice(name: 'CHOICE_PARAM', description: 'Select a choice:', choices: ['Terraform', 'CloudFormation', 'Pulumi']) // Correct syntax for choice parameter
-        choice(name: 'TF_SECOND_ACTION', description: 'Select a Terraform action:', choices: ['apply', 'destroy']) // Properly named and formatted choice parameter
     }
 
     stages {
@@ -38,8 +37,8 @@ pipeline {
             steps {
                 dir('infra') {
                     echo "Is this production environment? ${params.IS_PROD}" // Display the value of the boolean parameter
-                    echo "Selected second action is: ${params.TF_SECOND_ACTION}" // Display the selected second action
-                    sh "terraform ${params.TF_ACTION} -auto-approve" // Use the string parameter for the Terraform action
+                    echo "Executing Terraform Action: ${params.TF_ACTION}" // Debugging to show the value
+                    sh "terraform ${params.TF_ACTION} -auto-approve" // Correctly include TF_ACTION value
                 }
             }
         }
