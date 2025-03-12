@@ -2,9 +2,9 @@ pipeline {
     agent any
 
     parameters {
-        string(name: 'tf_TEST', description: 'Terraform Action', defaultValue: '') // Corrected syntax for string parameter
-        booleanParam(name: 'IS_PROD', description: 'Is this production environment?', defaultValue: true) // Fixed booleanParam syntax
-        choice(name: 'CHOICE_PARAM', description: 'Select a choice:', choices: ['Terraform', 'Cloudformation', 'Pulumi']) // Correctly defined choice parameter
+        string(name: 'tf_TEST', description: 'Enter the Terraform action (e.g., plan, apply)', defaultValue: '') // Correct syntax for string parameter
+        booleanParam(name: 'IS_PROD', description: 'Is this production environment?', defaultValue: true) // Properly configured boolean parameter
+        choice(name: 'CHOICE_PARAM', description: 'Select a choice:', choices: ['Terraform', 'CloudFormation', 'Pulumi']) // Correct syntax for choice parameter
     }
 
     stages {
@@ -12,7 +12,7 @@ pipeline {
             steps {
                 dir('infra') {
                     sh 'terraform init'
-                    echo "Selected choice is: ${params.CHOICE_PARAM}" // Display the chosen option
+                    echo "Selected choice is: ${params.CHOICE_PARAM}" // Display the selected option in the pipeline log
                 }
             }
         }
@@ -28,7 +28,7 @@ pipeline {
         stage('tf-plan') {
             steps {
                 dir('infra') {
-                    sh 'terraform plan' // Updated the action for the plan stage
+                    sh 'terraform plan' // Updated to 'terraform plan' for this stage
                 }
             }
         }
@@ -36,8 +36,8 @@ pipeline {
         stage('tf-apply') {
             steps {
                 dir('infra') {
-                    echo "Is this production environment? ${params.IS_PROD}" // Display boolean parameter
-                    sh "terraform ${params.tf_TEST} -auto-approve" // Use string parameter
+                    echo "Is this production environment? ${params.IS_PROD}" // Display the value of the boolean parameter
+                    sh "terraform ${params.tf_TEST} -auto-approve" // Use the string parameter for the Terraform action
                 }
             }
         }
@@ -45,10 +45,10 @@ pipeline {
 
     post {
         success {
-            echo 'Infra build successful'
+            echo 'Infrastructure build successful'
         }
         failure {
-            echo 'Infra build failed'
+            echo 'Infrastructure build failed'
         }
         aborted {
             echo 'Pipeline aborted'
@@ -56,10 +56,7 @@ pipeline {
         always {
             steps {
                 echo 'Pipeline build finished and cleaning up...'
-                cleanWs() // Clean workspace
-                dir("${workspace_tmp}") {
-                    deleteDir() // Ensure temporary directories are cleaned up
-                }
+                cleanWs() // Clean the workspace
             }
         }
     }
