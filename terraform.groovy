@@ -1,6 +1,11 @@
 pipeline {
     agent any
 
+    parameters {
+        string(name: 'tf_TEST', description: 'Terraform Action', defaultValue: '') // Fixed syntax for string parameter
+        booleanParam(name: 'IS_PROD', description: 'Is this production environment?', defaultValue: true) // Corrected booleanParam syntax
+    }
+
     stages {
         stage('tf-init') {
             steps {
@@ -25,6 +30,15 @@ pipeline {
                 }
             }
         }
+
+        stage('tf-apply') {
+            steps {
+                dir('infra') {
+                    echo "Is this production environment? ${params.IS_PROD}" // Corrected syntax for params usage
+                    sh "terraform ${params.tf_TEST} -auto-approve" // Fixed typo and corrected parameter reference
+                }
+            }
+        }
     }
 
     post {
@@ -38,11 +52,12 @@ pipeline {
             echo 'Pipeline aborted'
         }
         always {
-            echo 'Pipeline build finished and cleaning up...'
-            cleanWs()
-            // Remove temporary directories or files explicitly if required
-            dir("${workspace_tmp}") {
-                deleteDir()
+            steps {
+                echo 'Pipeline build finished and cleaning up...'
+                cleanWs() // Clean workspace
+                dir("${workspace_tmp}") {
+                    deleteDir() // Ensure temporary directories are cleaned up
+                }
             }
         }
     }
