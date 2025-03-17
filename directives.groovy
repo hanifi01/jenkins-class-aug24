@@ -1,13 +1,16 @@
 pipeline {
     agent any
+
     environment {
         vstisblr1 = "Building stage"
         variable2 = "Testing Stage"
         jenkinsprivate = credentials('jenkins-private-key') // Correct handling of credentials
     }
+
     parameters {
         string(name: 'tf_TEST', description: 'Terraform Action', defaultValue: '') // Fixed syntax for parameter definition
     }
+
     stages {
         stage('Info') {
             steps {
@@ -35,12 +38,18 @@ pipeline {
             }
         }
     }
+
     post {
         success {
             echo 'The pipeline succeeded!'
         }
         failure {
             echo 'The pipeline failed :('
+        }
+        always {
+            mail to: 'hanifiabdullah@gmail.com',
+                 subject: "Status of pipeline: ${currentBuild.fullDisplayName}",
+                 body: "${env.BUILD_URL} has result ${currentBuild.result}"
         }
     }
 }
